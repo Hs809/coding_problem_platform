@@ -16,8 +16,12 @@ app.use(morgan("tiny"));
 
 // import all router here
 const user = require("./routes/user");
+const question = require("./routes/question");
+const testcase = require("./routes/testcase");
 
 app.use("/api", user);
+app.use("/api", question);
+app.use("/api", testcase);
 
 // export the app js
 module.exports = app;

@@ -7,10 +7,15 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  solution: {
-    type: String,
+  problemId: {
+    type: Number,
     required: true,
+    unique: true,
   },
+  // solution: {
+  //   type: String,
+  //   required: true,
+  // },
 });
 
 module.exports = mongoose.model("Question", questionSchema);

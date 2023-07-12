@@ -1,47 +1,71 @@
 const BigPromise = require("../middlewares/bigPromise");
 const Question = require("../model/question");
 const CustomError = require("../utils/customeError");
+var accessToken = process.env.SPHERE_PROBLEM_TOKEN;
+var endpoint = process.env.SPHERE_PROBLEM_END_POINT;
+const axios = require("axios");
 
 exports.createQuestion = BigPromise(async (req, res, next) => {
-  const { questionText, solution } = req.body;
+  const { questionText } = req.body;
 
   // Validate the request body
-  if (!questionText || !solution) {
+  if (!questionText) {
     return next(new CustomError("Missing required fields", 400));
   }
 
+  // define request parameters
+  var problemData = {
+    name: questionText,
+    masterjudgeId: 1001,
+  };
+  const response = await axios({
+    method: "post",
+    url: `https://${endpoint}/api/v4/problems?access_token=${accessToken}`,
+    data: problemData,
+  });
   const question = await Question.create({
     questionText,
-    solution,
+    problemId: response.data.id,
   });
   res
     .status(200)
     .json({ question, message: "Created question successfully!!" });
 });
 exports.updateQuestion = BigPromise(async (req, res, next) => {
-  const { questionText, solution, id } = req.body;
+  const { questionText, problemId } = req.body;
 
   // Validate the request body
-  if (!questionText || !solution || !id) {
+  if (!questionText || !problemId) {
     return next(new CustomError("Missing required fields", 400));
   }
-  const existingQuestion = await Question.findByIdAndUpdate(id, {
-    questionText,
-    solution,
+  var problemData = {
+    name: questionText,
+  };
+
+  await axios({
+    method: "put",
+    url: `https://${endpoint}/api/v4/problems/${problemId}?access_token=${accessToken}`,
+    data: problemData,
   });
-  res
-    .status(200)
-    .json({ existingQuestion, message: "question updated successfully" });
+  const existingQuestion = await Question.findOne({ problemId });
+  existingQuestion.questionText = questionText;
+  await existingQuestion.save();
+  res.status(200).json({
+    existingQuestion,
+    message: "question updated successfully",
+  });
 });
 exports.deleteQuestion = BigPromise(async (req, res, next) => {
-  const { id } = req.body;
+  const { problemId } = req.body;
 
   // Validate the request body
-  if (!id) {
+  if (!problemId) {
     return next(new CustomError("Missing required fields", 400));
   }
-  const existingQuestion = await Question.findByIdAndDelete(id);
-  res
-    .status(200)
-    .json({ existingQuestion, message: "question deleted successfully" });
+  await axios({
+    method: "DELETE",
+    url: `https://${endpoint}/api/v4/problems/${problemId}?access_token=${accessToken}`,
+  });
+  await Question.findOneAndDelete({ problemId });
+  res.status(200).json({ message: "question deleted successfully" });
 });
