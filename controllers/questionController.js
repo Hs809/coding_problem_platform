@@ -9,7 +9,7 @@ exports.createQuestion = BigPromise(async (req, res, next) => {
   const { name, body, typeId } = req.body;
 
   // Validate the request body
-  if (!questionText) {
+  if (!name) {
     return next(new CustomError("Missing required fields", 400));
   }
 
