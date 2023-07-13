@@ -6,7 +6,7 @@ var endpoint = process.env.SPHERE_PROBLEM_END_POINT;
 const axios = require("axios");
 
 exports.createQuestion = BigPromise(async (req, res, next) => {
-  const { questionText } = req.body;
+  const { name, body, typeId } = req.body;
 
   // Validate the request body
   if (!questionText) {
@@ -15,7 +15,9 @@ exports.createQuestion = BigPromise(async (req, res, next) => {
 
   // define request parameters
   var problemData = {
-    name: questionText,
+    name,
+    body,
+    typeId,
     masterjudgeId: 1001,
   };
   const response = await axios({
@@ -36,7 +38,7 @@ exports.updateQuestion = BigPromise(async (req, res, next) => {
 
   // Validate the request body
   if (!questionText || !problemId) {
-    return next(new CustomError("Missing required fields", 400));
+    return next(new CustomError("Missing required fields", 400, res));
   }
   var problemData = {
     name: questionText,
@@ -60,7 +62,7 @@ exports.deleteQuestion = BigPromise(async (req, res, next) => {
 
   // Validate the request body
   if (!problemId) {
-    return next(new CustomError("Missing required fields", 400));
+    return next(new CustomError("Missing required fields", 400, res));
   }
   await axios({
     method: "DELETE",

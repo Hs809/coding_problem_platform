@@ -8,7 +8,7 @@ exports.signup = BigPromise(async (req, res, next) => {
 
   if (!email || !name || !password || !role) {
     return next(
-      new CustomError("Name, Email, role and password are required", 400)
+      new CustomError("Name, Email, role and password are required", 400, res)
     );
   }
 
@@ -26,19 +26,19 @@ exports.login = BigPromise(async (req, res, next) => {
   const { email, password } = req.body;
   // check for presence of email and password
   if (!email || !password) {
-    return next(new CustomError("Please provide email and password", 400));
+    return next(new CustomError("Please provide email and password", 400, res));
   }
   // get user from DB
   const user = await User.findOne({ email }).select("+password");
   // user not found in DM
   if (!user) {
-    return next(new CustomError("Email or password doesn't exist ", 400));
+    return next(new CustomError("Email or password doesn't exist ", 400, res));
   }
   // matching the password
   const isPasswordCorrect = await user.isValidatedPassword(password);
   // password doesn't match
   if (!isPasswordCorrect) {
-    return next(new CustomError("Email or password doesn't exist ", 400));
+    return next(new CustomError("Email or password doesn't exist ", 400, res));
   }
   // if all goes good and we send the token
   cookieToken(user, res);

@@ -16,13 +16,13 @@ exports.createTestCase = BigPromise(async (req, res, next) => {
 
   // Validate the request body
   if (!input || !output || !problemId || !timelimit) {
-    return next(new CustomError("Missing required fields", 400));
+    return next(new CustomError("Missing required fields", 400, res));
   }
 
   // Find the question by its ID
   const question = await Question.findOne({ problemId });
   if (!question) {
-    return next(new CustomError("Question not found", 404));
+    return next(new CustomError("Question not found", 404, res));
   }
   //   save the testcase in sphere engine
   await axios({

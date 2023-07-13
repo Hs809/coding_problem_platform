@@ -6,7 +6,7 @@ exports.isLoggedIn = BigPromise(async (req, res, next) => {
   const token = req.cookies.token || req.header("Authorization")?.split(" ")[1];
 
   if (!token) {
-    return next(new CustomError("Login first to access this page", 401));
+    return next(new CustomError("Login first to access this page", 401, res));
   }
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -17,7 +17,7 @@ exports.customRole = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new CustomError("You are not allowed for this resource", 403)
+        new CustomError("You are not allowed for this resource", 403, res)
       );
     }
     next();

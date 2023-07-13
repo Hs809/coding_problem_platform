@@ -10,7 +10,7 @@ exports.createSubmission = BigPromise(async (req, res, next) => {
 
   // Validate the request body
   if (!problemId || !source) {
-    return next(new CustomError("Missing required fields", 400));
+    return next(new CustomError("Missing required fields", 400, res));
   }
 
   // define request parameters
@@ -35,7 +35,7 @@ exports.getSubmission = BigPromise(async (req, res, next) => {
   const { submissionId, email } = req.query;
   // Validate the request body
   if (!submissionId) {
-    return next(new CustomError("Missing required fields", 400));
+    return next(new CustomError("Missing required fields", 400, res));
   }
   const response = await axios({
     method: "get",
