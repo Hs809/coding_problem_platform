@@ -18,10 +18,12 @@ app.use(morgan("tiny"));
 const user = require("./routes/user");
 const question = require("./routes/question");
 const testcase = require("./routes/testcase");
+const submission = require("./routes/submission");
 
 app.use("/api", user);
 app.use("/api", question);
 app.use("/api", testcase);
+app.use("/api", submission);
 
 // export the app js
 module.exports = app;
