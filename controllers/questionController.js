@@ -6,16 +6,16 @@ var endpoint = process.env.SPHERE_PROBLEM_END_POINT;
 const axios = require("axios");
 
 exports.createQuestion = BigPromise(async (req, res, next) => {
-  const { name, body, typeId } = req.body;
+  const { questionText, body, typeId } = req.body;
 
   // Validate the request body
-  if (!name) {
-    return next(new CustomError("Missing required fields", 400));
+  if (!questionText) {
+    return next(new CustomError("Missing required fields", 400, res));
   }
 
   // define request parameters
   var problemData = {
-    name,
+    name: questionText,
     body,
     typeId,
     masterjudgeId: 1001,
@@ -34,7 +34,7 @@ exports.createQuestion = BigPromise(async (req, res, next) => {
     .json({ question, message: "Created question successfully!!" });
 });
 exports.updateQuestion = BigPromise(async (req, res, next) => {
-  const { questionText, problemId } = req.body;
+  const { questionText, problemId, body, typeId } = req.body;
 
   // Validate the request body
   if (!questionText || !problemId) {
@@ -42,6 +42,8 @@ exports.updateQuestion = BigPromise(async (req, res, next) => {
   }
   var problemData = {
     name: questionText,
+    body,
+    typeId,
   };
 
   await axios({

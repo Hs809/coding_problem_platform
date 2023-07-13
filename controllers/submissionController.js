@@ -46,5 +46,5 @@ exports.getSubmission = BigPromise(async (req, res, next) => {
     subject: "Solution for your problem",
     message: `Your score is ${response.data.result.score} and status is ${response.data.result.status.name}`,
   });
-  res.status(200).send(JSON.stringify(response.data.result));
+  res.status(200).send(response.data.result);
 });
