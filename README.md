@@ -5,10 +5,6 @@ Description: This is the assignment from comet labs to create a backend for codi
 # Prereuisites
 - Node js
 
-Postman Link -> https://api.postman.com/collections/16878563-84e7c186-19ec-4ba5-92d1-53afde60df34?access_key=PMAT-01H58878NRT3C9V0154ADA30PW
-
-
-
 ## API Documentation
 
 ### Signup API
