@@ -69,3 +69,16 @@ exports.deleteQuestion = BigPromise(async (req, res, next) => {
   await Question.findOneAndDelete({ problemId });
   res.status(200).json({ message: "question deleted successfully" });
 });
+exports.listQuestions = BigPromise(async (req, res, next) => {
+  const { limit, offset } = req.query;
+
+  const response = await axios({
+    method: "get",
+    url: `https://${endpoint}/api/v4/problems?access_token=${accessToken}&limit=${limit}&offset=${offset}`,
+  });
+
+  res.status(200).send({
+    responseData: response.data.items,
+    paging: response.data.paging,
+  });
+});
