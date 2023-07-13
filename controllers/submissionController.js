@@ -3,6 +3,7 @@ const CustomError = require("../utils/customeError");
 var accessToken = process.env.SPHERE_PROBLEM_TOKEN;
 var endpoint = process.env.SPHERE_PROBLEM_END_POINT;
 const axios = require("axios");
+const mailHelper = require("../utils/emailHelper");
 
 exports.createSubmission = BigPromise(async (req, res, next) => {
   const { problemId, source } = req.body;
@@ -24,7 +25,6 @@ exports.createSubmission = BigPromise(async (req, res, next) => {
     url: `https://${endpoint}/api/v4/submissions?access_token=${accessToken}`,
     data: submissionData,
   });
-  console.log({ responseId: response.data.id });
   res.status(200).json({
     submissionId: response.data.id,
     message: "solution submitted successfully",
@@ -32,8 +32,7 @@ exports.createSubmission = BigPromise(async (req, res, next) => {
 });
 
 exports.getSubmission = BigPromise(async (req, res, next) => {
-  const { submissionId } = req.query;
-  console.log({ submissionId });
+  const { submissionId, email } = req.query;
   // Validate the request body
   if (!submissionId) {
     return next(new CustomError("Missing required fields", 400));
@@ -42,6 +41,10 @@ exports.getSubmission = BigPromise(async (req, res, next) => {
     method: "get",
     url: `https://${endpoint}/api/v4/submissions/${submissionId}?access_token=${accessToken}`,
   });
-  console.log({ response: JSON.stringify(response.data.result) });
+  await mailHelper({
+    email,
+    subject: "Solution for your problem",
+    message: `Your score is ${response.data.result.score} and status is ${response.data.result.status.name}`,
+  });
   res.status(200).send(JSON.stringify(response.data.result));
 });
